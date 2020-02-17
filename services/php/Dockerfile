@@ -12,9 +12,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/reposi
 COPY ./extensions /tmp/extensions
 WORKDIR /tmp/extensions
 RUN chmod +x install.sh \
-    && sh install.sh \
-    && rm -rf /tmp/extensions
-
+    && sh install.sh
 
 RUN apk --no-cache add tzdata \
     && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
@@ -31,9 +29,21 @@ RUN curl -o /usr/bin/composer https://mirrors.aliyun.com/composer/composer.phar 
     && chmod +x /usr/bin/composer
 ENV COMPOSER_HOME=/tmp/composer
 
+# Install thrift
+RUN apk --no-cache add git automake flex bison \
+    && mkdir thrift-0.13.0 \
+    && tar -xf thrift-0.13.0.tar.gz -C thrift-0.13.0 --strip-components=1 \
+    && cd thrift-0.13.0 \
+    && ./bootstrap.sh \
+    && ./configure \
+    && make \ 
+    && make install \
+    && rm -rf /tmp/extensions
+
 
 # php image's www-data user uid & gid are 82, change them to 1000 (primary user)
 RUN apk --no-cache add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
+
 
 
 WORKDIR /www

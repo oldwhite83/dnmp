@@ -69,7 +69,6 @@ installExtensionFromTgz()
     docker-php-ext-enable ${extensionName} $2
 }
 
-
 if [[ -z "${EXTENSIONS##*,pdo_mysql,*}" ]]; then
     echo "---------- Install pdo_mysql ----------"
     docker-php-ext-install ${MC} pdo_mysql
@@ -501,8 +500,9 @@ if [[ -z "${EXTENSIONS##*,swoole,*}" ]]; then
     isPhpVersionGreaterOrEqual 7 0
 
     if [[ "$?" = "1" ]]; then
-        installExtensionFromTgz swoole-4.4.2
+        installExtensionFromTgz swoole-4.4.14
     else
+        #installExtensionFromTgz swoole-4.4.14
         installExtensionFromTgz swoole-2.0.11
     fi
 fi
@@ -543,3 +543,4 @@ if [[ -z "${EXTENSIONS##*,xlswriter,*}" ]]; then
         echo "---------- PHP Version>= 7.0----------"
     fi
 fi
+
